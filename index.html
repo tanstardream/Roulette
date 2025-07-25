@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打屁股 & 惩罚轮盘</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- General & Reset --- */
+        :root {
+            --bg-color: #121212;
+            --card-bg-color: #1E1E1E;
+            --primary-text-color: #E0E0E0;
+            --heading-color: #FFFFFF;
+            --accent-color: #E53E3E;
+            --border-color: #333333;
+            --special-bg-color: #4a2525;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            font-size: 16px;
+            line-height: 1.7;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        /* --- Layout & Container --- */
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* --- Header --- */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--heading-color);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header .meta-info {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        header .meta-info a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        header .meta-info a:hover {
+            color: #ff6b6b;
+        }
+
+        /* --- Card Component --- */
+        section.card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        section.card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        /* --- Typography within Cards --- */
+        .card h2 {
+            font-size: 1.75rem;
+            color: var(--heading-color);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--accent-color);
+            font-weight: 700;
+        }
+        
+        p { margin-bottom: 1rem; }
+        p:last-child { margin-bottom: 0; }
+        strong, b { color: var(--heading-color); font-weight: 700; }
+
+        /* --- Lists --- */
+        ul, ol { padding-left: 25px; }
+        li { margin-bottom: 0.75rem; }
+        li::marker { color: var(--accent-color); font-weight: bold; }
+
+        /* --- Table --- */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        thead th { background-color: #2a2a2a; color: var(--heading-color); font-weight: 700; white-space: nowrap; }
+        tbody tr { transition: background-color 0.2s ease; }
+        tbody tr:nth-child(even) { background-color: #252525; }
+        tbody tr:hover { background-color: #383838; }
+        td:first-child { font-weight: bold; color: var(--accent-color); }
+
+        /* --- Special Sections --- */
+        #female-rules { background-color: var(--special-bg-color); border: 1px solid var(--accent-color); }
+        #female-rules h2 { border-bottom-color: #ff6b6b; }
+        .scenario-list li { list-style-type: none; padding-left: 0; }
+        .scenario-list strong { display: block; margin-bottom: 0.25rem; color: var(--accent-color); }
+
+        /* --- ROULETTE FUNCTIONALITY STYLES --- */
+        #roulette-controls {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        #spin-button {
+            background-color: var(--accent-color);
+            color: var(--heading-color);
+            border: none;
+            border-radius: 8px;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        #spin-button:hover {
+            background-color: #c53030;
+            transform: translateY(-2px);
+        }
+
+        #spin-button:active {
+            transform: translateY(0);
+        }
+
+        #results-card {
+            display: none; /* Hidden by default */
+            border: 2px solid var(--accent-color);
+        }
+
+        .result-item {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-item strong {
+            color: var(--heading-color);
+            display: inline-block;
+            width: 150px; /* Aligns the result text */
+        }
+        
+        .result-item span {
+            color: var(--primary-text-color);
+        }
+
+        #bonus-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(229, 62, 62, 0.1);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 4px;
+            color: #f7a5a5;
+        }
+        
+        #bonus-message strong {
+            color: #fff;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            body { padding: 1rem 0.5rem; font-size: 15px; }
+            .container { padding: 0 0.5rem; }
+            header h1 { font-size: 2.2rem; }
+            section.card { padding: 1.5rem; border-radius: 8px; }
+            .card h2 { font-size: 1.5rem; }
+            th, td { padding: 10px 12px; }
+            .result-item strong { width: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>打屁股 & 惩罚轮盘</h1>
+            <p class="meta-info">
+                Roulette #266 | Created July 16, 2019, Version 1.1<br>
+                汉化&制图: 抖M酱 (Twitter: @doumiaojiang) | 博客地址: 
+                <a href="http://sissy.game" target="_blank" rel="noopener noreferrer">sissy.game</a>
+            </p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>核心玩法</h2>
+                <p><strong>规则:</strong> 点击下方的按钮来随机生成V, W, Y, X, Z惩罚项目。</p>
+                <p><strong>奖励:</strong></p>
+                <ul>
+                    <li><strong>两个一样时:</strong> 将打屁股数量翻倍。</li>
+                    <li><strong>三个一样时:</strong> 做所有额外惩罚 (X和Z)。</li>
+                </ul>
+            </section>
+            
+            <!-- ROULETTE CONTROLS AND RESULTS -->
+            <section id="roulette-controls">
+                <button id="spin-button">生成惩罚</button>
+            </section>
+            
+            <section class="card" id="results-card">
+                <h2>你的惩罚</h2>
+                <div id="results-display">
+                    <p class="result-item"><strong>位置 (V):</strong> <span id="result-v">---</span></p>
+                    <p class="result-item"><strong>工具 (W):</strong> <span id="result-w">---</span></p>
+                    <p class="result-item"><strong>打屁股 (Y):</strong> <span id="result-y">---</span></p>
+                    <p class="result-item"><strong>额外项 (X):</strong> <span id="result-x">---</span></p>
+                    <p class="result-item"><strong>附加惩罚 (Z):</strong> <span id="result-z">---</span></p>
+                </div>
+                <div id="bonus-message" style="display: none;"></div>
+            </section>
+            <!-- END ROULETTE SECTION -->
+
+            <section class="card">
+                <h2>位置 (V)</h2>
+                <ol>
+                    <li>俯身在椅子上</li>
+                    <li>俯身在桌子上</li>
+                    <li>趴在沙发上</li>
+                    <li>双手和膝盖着地</li>
+                    <li>躺下，腿抬高</li>
+                    <li>站立弯腰</li>
+                </ol>
+            </section>
+
+            <section class="card">
+                <h2>工具 (W)</h2>
+                <ol>
+                    <li>手</li>
+                    <li>皮手拍或鞋</li>
+                    <li>卷起的杂志</li>
+                    <li>木质手拍</li>
+                    <li>尺子</li>
+                    <li>藤条</li>
+                </ol>
+            </section>
+
+            <section class="card">
+                <h2>打屁股 (Y)</h2>
+                <p><strong>轻力度:</strong> 略微疼痛就够了，屁股可能会变粉红色。</p>
+                <p><strong>中力度:</strong> 需要让你感到疼痛，可能会使屁股变红。</p>
+                <p><strong>重力度:</strong> 下手力度重，可能会让你第二天还能感到疼痛。</p>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>选项</th>
+                                <th>轻力度</th>
+                                <th>中力度</th>
+                                <th>重力度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>30</td><td>20</td><td>2</td></tr>
+                            <tr><td>2</td><td>10</td><td>10</td><td>5</td></tr>
+                            <tr><td>3</td><td>20</td><td>40</td><td>10</td></tr>
+                            <tr><td>4</td><td>20</td><td>20</td><td>15</td></tr>
+                            <tr><td>5</td><td>15</td><td>50</td><td>20</td></tr>
+                            <tr><td>6</td><td>10</td><td>60</td><td>30</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>打屁股额外项 (X)</h2>
+                <ol>
+                    <li>光着屁股</li>
+                    <li>穿上内裤</li>
+                    <li>给你的屁股上油</li>
+                    <li>打屁股前在屁股滴上热蜡</li>
+                    <li>在你的屁股两侧写下淫语</li>
+                    <li>戴上肛塞, 并且从X额外项2-5选择一个</li>
+                </ol>
+            </section>
+
+            <section class="card">
+                <h2>附加惩罚 (Z)</h2>
+                <ol>
+                    <li>打屁股后跪在角落里15分钟</li>
+                    <li>被打屁股时要佩戴口塞</li>
+                    <li>被打屁股时穿着淫荡、羞辱或暴露的衣服</li>
+                    <li>被打屁股时用一袋冰贴着蛋蛋</li>
+                    <li>被打屁股时呻吟并乞求原谅</li>
+                    <li>在被打屁股后，佩戴贞操锁5天（禁止正常高潮）。</li>
+                </ol>
+            </section>
+            
+            <section class="card">
+                <h2>预设惩罚方案</h2>
+                <p>如果你不想投掷骰子/生成随机数，你可以选择以下预设之一：</p>
+                <ul class="scenario-list">
+                    <li><strong>不要说脏话 (21142)</strong> 弯腰在厨房的台面上，用一块肥皂作为口塞。</li>
+                    <li><strong>公开展示</strong> 直播打你的屁股，再加上你选择的额外惩罚。</li>
+                    <li><strong>不要泄漏 (51133)</strong> 灌入2升液体，并用肛塞塞住避免漏出。完成后，取下肛塞，塞入3个卫生棉条进菊穴。</li>
+                    <li><strong>非常严厉的惩罚 (15663)</strong> 灌入2升的水&油混合液，用肥皂摩擦尿道口，在被打屁股前戴上贞操锁。</li>
+                    <li><strong>香蕉婊子 (65125)</strong> 把两根小香蕉塞进菊穴。完成一次打屁股Y后，把一根小香蕉塞进菊穴，直到塞入5根。</li>
+                    <li><strong>产卵 (51335)</strong> 每打10下后，将明胶做的鸡蛋/卵塞入你的菊穴。</li>
+                </ul>
+            </section>
+
+            <section class="card" id="female-rules">
+                <h2>女性专属规则</h2>
+                <p>如果是女性，请更换以下任务：</p>
+                <ol>
+                    <li><strong>替换附加惩罚 #4:</strong> 在开始打屁股之前将冰块塞入你的菊穴，在轻打屁股完成后插入第二个，在中力度打屁股后插入第三个。</li>
+                    <li><strong>替换附加惩罚 #6:</strong> 被打屁股时，在你的阴部贴上一条胶带，你5天内不得高潮。</li>
+                </ol>
+            </section>
+        </main>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- DATA ---
+        // Store all options in arrays for easy access. Indices match the numbers (1-6).
+        const options = {
+            v: [
+                "俯身在椅子上", "俯身在桌子上", "趴在沙发上",
+                "双手和膝盖着地", "躺下，腿抬高", "站立弯腰"
+            ],
+            w: [
+                "手", "皮手拍或鞋", "卷起的杂志",
+                "木质手拍", "尺子", "藤条"
+            ],
+            y: [ // Array of objects for complex data
+                { light: 30, medium: 20, hard: 2 },
+                { light: 10, medium: 10, hard: 5 },
+                { light: 20, medium: 40, hard: 10 },
+                { light: 20, medium: 20, hard: 15 },
+                { light: 15, medium: 50, hard: 20 },
+                { light: 10, medium: 60, hard: 30 }
+            ],
+            x: [
+                "光着屁股", "穿上内裤", "给你的屁股上油",
+                "打屁股前在屁股滴上热蜡", "在你的屁股两侧写下淫语", "戴上肛塞, 并且从X额外项2-5选择一个"
+            ],
+            z: [
+                "打屁股后跪在角落里15分钟", "被打屁股时要佩戴口塞", "被打屁股时穿着淫荡、羞辱或暴露的衣服",
+                "被打屁股时用一袋冰贴着蛋蛋", "被打屁股时呻吟并乞求原谅", "在被打屁股后，佩戴贞操锁5天（禁止正常高潮）。"
+            ]
+        };
+
+        // --- ELEMENTS ---
+        const spinButton = document.getElementById('spin-button');
+        const resultsCard = document.getElementById('results-card');
+        const bonusMessageDiv = document.getElementById('bonus-message');
+
+        // Result display spans
+        const resultSpans = {
+            v: document.getElementById('result-v'),
+            w: document.getElementById('result-w'),
+            y: document.getElementById('result-y'),
+            x: document.getElementById('result-x'),
+            z: document.getElementById('result-z'),
+        };
+
+        // --- EVENT LISTENER ---
+        spinButton.addEventListener('click', generatePunishment);
+
+        // --- FUNCTIONS ---
+        function generatePunishment() {
+            // 1. Generate random rolls (1-6) for each category
+            const rolls = {
+                v: getRandomRoll(),
+                w: getRandomRoll(),
+                y: getRandomRoll(),
+                x: getRandomRoll(),
+                z: getRandomRoll()
+            };
+
+            // 2. Check for bonuses based on the dice roll numbers
+            let spankMultiplier = 1;
+            let doAllExtras = false;
+            let bonusText = "";
+
+            const rollCounts = getRollCounts(Object.values(rolls));
+            
+            if (Object.values(rollCounts).some(count => count >= 3)) {
+                doAllExtras = true;
+                bonusText = "<strong>奖励: 三个一样!</strong> 完成所有额外惩罚 (X和Z)。";
+            } else if (Object.values(rollCounts).some(count => count >= 2)) {
+                spankMultiplier = 2;
+                bonusText = "<strong>奖励: 两个一样!</strong> 打屁股数量翻倍。";
+            }
+            
+            // 3. Get the selected options based on rolls
+            const selectedY = options.y[rolls.y - 1];
+            const spankCounts = `轻${selectedY.light * spankMultiplier}, 中${selectedY.medium * spankMultiplier}, 重${selectedY.hard * spankMultiplier}`;
+
+            // 4. Update the DOM with results
+            resultSpans.v.textContent = `${rolls.v}. ${options.v[rolls.v - 1]}`;
+            resultSpans.w.textContent = `${rolls.w}. ${options.w[rolls.w - 1]}`;
+            resultSpans.y.textContent = `${rolls.y}. (${spankCounts})`;
+            resultSpans.x.textContent = doAllExtras ? "所有选项" : `${rolls.x}. ${options.x[rolls.x - 1]}`;
+            resultSpans.z.textContent = doAllExtras ? "所有选项" : `${rolls.z}. ${options.z[rolls.z - 1]}`;
+            
+            // 5. Display bonus message if applicable
+            if (bonusText) {
+                bonusMessageDiv.innerHTML = bonusText;
+                bonusMessageDiv.style.display = 'block';
+            } else {
+                bonusMessageDiv.style.display = 'none';
+            }
+            
+            // 6. Show the results card and scroll to it
+            resultsCard.style.display = 'block';
+            resultsCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Helper to get a random number from 1 to 6 (like a die roll)
+        function getRandomRoll() {
+            return Math.floor(Math.random() * 6) + 1;
+        }
+
+        // Helper to count occurrences of each roll number
+        function getRollCounts(rollsArray) {
+            return rollsArray.reduce((acc, roll) => {
+                acc[roll] = (acc[roll] || 0) + 1;
+                return acc;
+            }, {});
+        }
+    });
+    </script>
+</body>
+</html>
